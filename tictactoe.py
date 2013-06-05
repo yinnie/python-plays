@@ -1,4 +1,5 @@
 #stab at tic tac toe 
+import random
 
 #our board is a list of triplet strings
 BOARD = [[' ', ' ',' '],
@@ -16,30 +17,46 @@ WINNING_BOARDS = [[[0,0], [0,1], [0,2]],
                   [[0,2], [1,1], [0,2]],
                   ]
                   
-X_VALUES = []                      # create an empty list to store the moves of the first player
-O_VALUES = []                      # create a list to store the marks that the second player
+X_VALUES = []                      # create an empty list to store the moves of the first player/ human
+O_VALUES = []                      # create a list to store the marks that the second player / computer
 counter = 0                        # counter to keep track of who is placing the mark
 
 def show():
     for element in BOARD:
        print '|'.join(element)     #for each element, join the individual pieces inside of it with '|' inside
                                    #notice '|' is in front of join(element)
-
-def move( counter_num ):           #player makes marks / moves.   
+def human():
     global counter                 #put global in front of counter so python know to look for it instead of creating one
+    print "place your move. enter row number of move"
     row = int(raw_input())         #player has to first put in row number
+    print "enter column number of move"
     col = int(raw_input())         #remember to convert to int
     if cell_taken ( row, col ) == False: #check if that square is taken
-       counter += 1    
-       if counter_num % 2 == 0:   
-          BOARD[row][col] = 'x'       #update the board. mark that cell with 'x'
-          X_VALUES.append([row, col])
-       else:
-          BOARD[row][col] = 'o'       #update the board. mark that cell with 'x'
-          O_VALUES.append([row, col])
+       BOARD[row][col] = 'x'          #update the board. mark that cell with 'x'
+       X_VALUES.append([row, col])
+       counter += 1
+    else: 
+       print "that cell is taken. please try again"
+       human()
+    
+def computer():
+    global counter                 
+    row = random.randint(0,2)
+    col = random.randint(0,2)       
+    if cell_taken ( row, col ) == False: #check if that square is taken
+       BOARD[row][col] = 'o'          
+       O_VALUES.append([row, col])
+       counter += 1
+    else: 
+       computer()
+    
+def move( counter_num ):
+    if counter_num % 2 == 0:
+       human()                          #human moves
     else:
-        print "that cell is taken. place somewhere else"
-
+       computer()                       #computer moves
+       
+       
 #def socre_move ( player, move_coordinate ): # score of a certain player's certain move
  #   score = 0
   #  winning_score = 
