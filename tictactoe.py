@@ -1,95 +1,124 @@
 #stab at tic tac toe 
 import random
 
-#our board is a list of triplet strings
-BOARD = [[' ', ' ',' '],
-          [' ', ' ',' '],
-          [' ', ' ',' ']]
+class Board:
+#	BOARD = {(0,0): ' ', (0, 1): ' ',(0,2): ' ', (1,0): ' ', (1,1): ' ',(1,2): ' ',
+
+        def __init__(self, board):
+            self.BOARD = [[' ', ' ',' '],
+                          [' ', ' ',' '],
+                          [' ', ' ',' ']]
+#       def get_possible_moves( current_board ):      # get whatever valid moves are available at the moment
+#          pass
+        def cell_taken(self, row_num, col_num):
+            if self.BOARD[row_num][col_num] == ' ':
+               return False
+            else:
+               return True 
+               
+        def show(self):
+            for element in self.BOARD:
+                print '|'.join(element)     #for each element, join the individual pieces inside of it with '|' inside
+                                        #notice '|' is in front of join(element)               
+        def move(self, a_human, a_computer ):
+            if self.counter % 2 == 0:
+               a_human.move( self )                          
+            else:
+               a_computer.move( self )        
+        counter = 0        
+        WINNING_BOARDS = [[[0,0], [0,1], [1,2]],      #a list of triplets. each triplet is a winning triplet combination
+						  [[1,0], [1,1], (1,2)],
+						  [[2,0], [2,1], [2,2]],
+						  [[0,0], [1,0], [2,0]],
+						  [[0,1], [1,1], [2,1]],
+						  [[0,2], [1,2], [2,2]],
+						  [[0,0], [1,1], [2,2]],
+						  [[0,2], [1,1], [0,2]],
+						  ]
+						  
+class Human:
+
+      def __init__(self):
+          pass    
           
-#a list of triplets. each triplet is a winning triplet combination
-WINNING_BOARDS = [[[0,0], [0,1], [0,2]],
-                  [[1,0], [1,1], [1,2]],
-                  [[2,0], [2,1], [2,2]],
-                  [[0,0], [1,0], [2,0]],
-                  [[0,1], [1,1], [2,1]],
-                  [[0,2], [1,2], [2,2]],
-                  [[0,0], [1,1], [2,2]],
-                  [[0,2], [1,1], [0,2]],
-                  ]
-                  
-X_VALUES = []                      # create an empty list to store the moves of the first player/ human
-O_VALUES = []                      # create a list to store the marks that the second player / computer
-counter = 0                        # counter to keep track of who is placing the mark
+      moves = []          
+      
+      def move( self, board ):
+		  print "place your move. enter row number of move"
+		  row = int(raw_input())         #player has to first put in row number
+		  print "enter column number of move"
+		  col = int(raw_input())         #remember to convert to int
+		  if  board.cell_taken ( row, col ) == False: #check if that square is taken
+		      board.BOARD[row][col] = 'x'          #update the board. mark that cell with 'x'
+		      self.moves.append([row, col])
+		      board.counter += 1
+		      print " human "
+		  else: 
+		      print "that cell is taken. please try again"
+		      self.move(board)      
+		      
+      def win( self, board ):
+          for element in board.WINNING_BOARDS:     #loop through all the winning triplets. see if x_values contain their elements
+              if element[0] in self.moves and\
+                 element[1] in self.moves and\
+                 element[2] in self.moves:
+                 print "human WON!! "
+                 return True
+                 break
+          return False
+          
+class Computer:
 
-def show():
-    for element in BOARD:
-       print '|'.join(element)     #for each element, join the individual pieces inside of it with '|' inside
-                                   #notice '|' is in front of join(element)
-def human():
-    global counter                 #put global in front of counter so python know to look for it instead of creating one
-    print "place your move. enter row number of move"
-    row = int(raw_input())         #player has to first put in row number
-    print "enter column number of move"
-    col = int(raw_input())         #remember to convert to int
-    if cell_taken ( row, col ) == False: #check if that square is taken
-       BOARD[row][col] = 'x'          #update the board. mark that cell with 'x'
-       X_VALUES.append([row, col])
-       counter += 1
-    else: 
-       print "that cell is taken. please try again"
-       human()
-    
-def computer():
-    global counter                 
-    row = random.randint(0,2)
-    col = random.randint(0,2)       
-    if cell_taken ( row, col ) == False: #check if that square is taken
-       BOARD[row][col] = 'o'          
-       O_VALUES.append([row, col])
-       counter += 1
-    else: 
-       computer()
-    
-def move( counter_num ):
-    if counter_num % 2 == 0:
-       human()                          #human moves
-    else:
-       computer()                       #computer moves
-       
-       
-#def socre_move ( player, move_coordinate ): # score of a certain player's certain move
- #   score = 0
-  #  winning_score = 
-    #total score is score of current stage of move and total of all potential moves
-   # score += winning_score ( player1 )
-    #score += -losing_score ( player2 )                                 
-                                         #for every move in the rest of the possible moves. calculate score and all potential moves
-    #return score  
-    
-        
-def won( player ):                     # player's list of moves
-    for element in WINNING_BOARDS:     #loop through all the winning triplets. see if x_values contain their elements
-        if element[0] in player and\
-           element[1] in player and\
-           element[2] in player:
-           return True
-           break
-    return False
+       def __init__(self):
+           pass
+       moves = []
+           
+       def move(self, board ):
+           row = random.randint(0,2)
+           col = random.randint(0,2)       
+           if board.cell_taken ( row, col ) == False: #check if that square is taken
+              board.BOARD[row][col] = 'o'          
+              self.moves.append([row, col])
+              board.counter += 1
+              print " computer "
+           else: 
+              self.move(board)
+              
+       def win( self, board ):
+           for element in board.WINNING_BOARDS:     #loop through all the winning triplets. see if x_values contain their elements
+               if element[0] in self.moves and\
+                  element[1] in self.moves and\
+                  element[2] in self.moves:
+                  print "computer WON!! "
+                  return True
+                  break
+           return False           
 
-def cell_taken( row_num, col_num):
-    if BOARD[row_num][col_num] == ' ':
-       return False
-    else:
-       return True           
 
+board = Board( [[' ', ' ',' '],
+			    [' ', ' ',' '],
+			    [' ', ' ',' ']] )
+human = Human()
+computer = Computer()
+
+#def minimax(current_board, player):
+ #   possible_boards = get_possible_boards(current_board)
+  #  for board in possible_boards:
+   #     if winning(board, player) == 1:
+    #        return board
+     #   else:
+      #      return minimax(board,1 if player==2 else 1) 
+            
+#def winning(board, player):
+    	                      
 def main():
     while True:
-          show()
-          move(counter)
-          if won( X_VALUES) or won ( O_VALUES):
+          board.show()
+          board.move( human, computer)
+          if human.win( board ) or computer.win ( board ):
              break
-    show()
-    print "YOU WON!! "
+    board.show()
+  
    
 if __name__ == '__main__':
     main()
