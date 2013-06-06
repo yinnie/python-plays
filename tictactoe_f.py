@@ -15,7 +15,7 @@ class Board:                                         #acts only as a data storag
 						  [[0,1], [1,1], [2,1]],
 						  [[0,2], [1,2], [2,2]],
 						  [[0,0], [1,1], [2,2]],
-						  [[0,2], [1,1], [0,2]],
+						  [[0,2], [1,1], [2,0]],
 						  ]
         human_moves = []                             
         computer_moves = []
@@ -26,27 +26,21 @@ def show( list_of ):
         print "|".join(element)
 
 def move( board ):  
-    if board.human == True:
+    if board.human:
        board.human = False
-       if human_move (board) == True:               #run human_move function and check winning
-          return True
-       else:
-          return False
+       return human_move (board)
     else:
        board.human = True
-       if computer_move (board) == True:            #run computer move function and check winning
-          return True
-       else:
-          return False
+       return computer_move (board)
               
 def human_move( board ):
     print "place your move. enter row number of move"
     row = int(raw_input())               
     print "enter column number of move"
     col = int(raw_input())                            #remember to convert to int
-    if check_valid_move(board, row, col) == True:
+    if check_valid_move(board, row, col) :
 	   print " human "
-	   if update_board(board, 0, row, col) == True:    # 0 is human
+	   if update_board(board, 0, row, col):    # 0 is human
 	      print " human won!! "
 	      return True
 	   else:
@@ -57,9 +51,9 @@ def human_move( board ):
 def computer_move( board ):                
     row = random.randint(0,2)
     col = random.randint(0,2)
-    if check_valid_move(board, row, col) == True:
+    if check_valid_move(board, row, col):
 	   print " computer "
-	   if update_board(board, 1, row, col) == True:    # 1 is computer
+	   if update_board(board, 1, row, col):    # 1 is computer
 	      print " computer won!! "
 	      return True
 	   else:
@@ -68,10 +62,7 @@ def computer_move( board ):
 	   computer_move(board) 
     
 def check_valid_move(board, row, col):
-    if board.BOARD[row][col] == ' ':
-       return True
-    else:
-       return False
+    return board.BOARD[row][col] == ' '
     
 def update_board(board, player, row, col):   
     if player == 0:                                   #0 is human
@@ -107,12 +98,4 @@ def main():
      
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-    
-    
+   
