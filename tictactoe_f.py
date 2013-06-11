@@ -121,12 +121,9 @@ def Minimax ( a_board ):
     return MAX ( a_board, 0)
 
 def MAX(a_board, depth):
-    print "depth is ", depth
-    print "Board is ", show(a_board.BOARD)
     board_temp = Board(a_board)
     if check_ending ( board_temp ):
        return leaf_value ( board_temp )
-
     value =-2
     for element in get_possible_boards (board_temp): 
         value_temp = MIN ( element, depth + 1 )       
@@ -135,6 +132,7 @@ def MAX(a_board, depth):
            the_right_move = element 
     log.info("max value is {value}".format(value=value))
     if depth == 0:
+       print "max value ", value
        return the_right_move
     return value 
 
@@ -150,6 +148,7 @@ def MIN ( a_board, depth ):
         if value_temp < value:
            value = value_temp
            the_right_move = element 
+    print "min value is ", value
     log.info("min value is {value}".format(value=value))
     return value
 
@@ -197,6 +196,7 @@ def check_ending( a_board  ):
        a_board.draw = True
        return True
     else: 
+       a_board.winner = None
        return False
 
 
@@ -204,7 +204,6 @@ def main():
     board = Board()                      #board is the only globally exposed item.
     board_imaginary = Board()             #theoretical board for AI to do calculations
     while True:
-          print "In While True"
           show( board.BOARD )
           if check_ending( board ) == False:
               board = play( board )
