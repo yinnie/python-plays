@@ -2,8 +2,14 @@
 #stab at tic tac toe 
 import random
 import copy
+import logging
+from os.path import realpath, join, dirname
 
-class Board:                                   
+log_file = realpath(join(dirname(__file__), "tictactoe.log"))
+logging.basicConfig(filename=log_file, filemode="w+", level=logging.DEBUG)
+log = logging.getLogger(__name__)
+
+class Board(object):                                   
     WINNING_BOARDS = [[[0,0], [0,1], [0,2]],     
 						  [[1,0], [1,1], (1,2)],
 						  [[2,0], [2,1], [2,2]],
@@ -13,22 +19,30 @@ class Board:
 						  [[0,0], [1,1], [2,2]],
 						  [[0,2], [1,1], [2,0]],
 						  ]
-   #喊大  
+    
     def __init__(self, board=None):
         if board is None:
-            self.BOARD = self.generate_fresh_board()
+            self.BOARD = Board.generate_fresh_board()
             self.human_moves = []                             
             self.computer_moves = []
             self.human = True
             self.winner = None
             self.draw = False
         else:
-            self.BOARD = board.BOARD
-            self.human_moves = board.human_moves 
-            self.computer_moves =board.computer_moves 
+            self.BOARD = copy.deepcopy(board.BOARD)
+            self.human_moves = copy.deepcopy(board.human_moves) 
+            self.computer_moves = copy.deepcopy(board.computer_moves)
             self.human = board.human 
             self.winner = board.winner 
             self.draw = board.draw 
+
+    @staticmethod
+    def generate_fresh_board():
+        return [[' ']*3 for x in range(0,3)]
+
+    @property
+    def computer(self):
+        return not self.human
 
 def show( list_of ):
     for element in list_of:
@@ -38,6 +52,10 @@ def play( a_board ):
         if a_board.human:
             move_result( a_board, human_move( a_board ),  "human")
             a_board.human = False
+        if a_board.computer:
+           a_board = computer_move ( a_board)
+           a_board.computer = True
+           # a_board.human = True
 
 def human_move( a_board ):
     print "place your move. enter row number of move"
@@ -45,8 +63,11 @@ def human_move( a_board ):
     print "enter column number of move"
     col = int(raw_input())                            #remember to convert to int
     return [row, col]
-    
-def computer_move( a_board ):                
+
+def computer_move ( a_board ):
+   return Minimax (a_board)
+
+def dumb_computer_move( a_board ):                
     row = random.randint(0,2)
     col = random.randint(0,2)
     return [row, col]
@@ -89,14 +110,22 @@ def check_valid_move( a_board, row, col ):
         print "that cell is taken. "    
         return False
 
+def Minimax ( a_board ):
+    return MAX ( a_board, 0)
+
 def MAX(a_board, depth):
-    get_possible_boards (board_temp)
-    for element in boards: 
+    board_temp = Board(a_board)
+    if check_ending ( board_temp ):
+       return leaf_value ( board_temp )
+    value =-2
+    the_right_move = board_temp 
+
+    for element in get_possible_boards (board_temp): 
         value_temp = MIN ( element, depth + 1 )       
         if value_temp > value:
            value = value_temp
            the_right_move = element 
-    print "max value is ", value
+    log.info("max value is {value}".format(value=value))
     if depth == 0:
        return the_right_move
     return value 
@@ -113,14 +142,13 @@ def MIN ( a_board, depth ):
         if value_temp < value:
            value = value_temp
            the_right_move = element 
-    print "min value is",value
+    log.info("min value is {value}".format(value=value))
     return value
 
 def get_possible_boards ( a_board ):
     possible_boards = []
     for cell in get_empty_cells( a_board ):
         new_board = Board(a_board)
-        #new_board.BOARD = copy.deepcopy(a_board.BOARD)
                       
         if a_board.human == True:
            #updating the newly created board with a mark in one of the empty cells
@@ -129,7 +157,7 @@ def get_possible_boards ( a_board ):
            update_board ( new_board, "computer", cell[0], cell[1])
         possible_boards.append(new_board)
     for each_board in possible_boards:
-        print "possible board", each_board.BOARD
+        log.info( "possible board: {board}".format(board=each_board.BOARD))
     return possible_boards
     
 def get_empty_cells( a_board ):
@@ -138,7 +166,6 @@ def get_empty_cells( a_board ):
         for col  in range(0, 3):
             if  a_board.BOARD[row][col]== ' ':
                empty_cells.append([row, col])
-    print empty_cells
     return empty_cells
 
 def leaf_value ( a_board ):                                 
