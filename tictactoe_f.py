@@ -33,11 +33,6 @@ class Board(object):
             self.human = board.human 
             self.winner = board.winner 
             self.draw = board.draw 
-
-    @staticmethod
-    def generate_fresh_board():
-        return [[' ']*3 for x in range(0,3)]
-
     @property
     def computer(self):
         return not self.human
@@ -85,7 +80,6 @@ def move_result( a_board, the_move, player ):
        new_board = update_board(a_board, player, the_move[0], the_move[1])
     else:
        new_board =  move_result( a_board, human_move(a_board), player)
-
     return new_board
 
 def update_board( a_board, player, row, col ):   
@@ -102,7 +96,6 @@ def update_board( a_board, player, row, col ):
           a_board.winner = "computer"
     else:
         raise Exception("Bad paramater in update_board: player")
-
     return a_board   
     
 def check_winning( list_of_moves, list_of_winning_boards ):
@@ -143,7 +136,6 @@ def Max(a_board, depth):
     return value 
 
 def Min ( a_board, depth ):
-    # min value of current state of board
     board_temp = Board(a_board)
     if check_ending ( board_temp ):
        return leaf_value ( board_temp )
@@ -210,10 +202,9 @@ def check_ending( a_board  ):
        return True
 
 def main():
-    board = Board()                      #board is the only globally exposed item.
-#    board.human_moves=[[0,0],[1,1],[1,2]]
+    board = Board()
+#    board.human_moves=[[0,0],[1,1],[1,2]]  #debugging by making fuller boards
 #    board.computer_moves=[[0,2],[0,1],[1,0]]
-    board_imaginary = Board()             #theoretical board for AI to do calculations
     while True:
           board.show( )
           if check_ending( board ) == False:
@@ -227,7 +218,7 @@ def main():
           elif board.draw == True:
                  print "it's a draw! game over"
                  break
-    board.show( board.BOARD )
+    board.show()
      
 if __name__ == '__main__':
    main()
