@@ -201,17 +201,18 @@ def check_ending( a_board  ):
     elif check_winning (a_board.computer_moves, a_board.winning_boards):
        a_board.winner = "computer"
        return True
-    elif a_board.BOARD.count == 0:
+    else:
+       for element in a_board.BOARD:
+           for cell in element:
+               if cell == ' ':
+                  return False
        a_board.draw = True
        return True
-    else: 
-       a_board.winner = None
-       return False
 
 def main():
     board = Board()                      #board is the only globally exposed item.
-#    board.human_moves=[[0,0],[1,0],[1,1]]
-#    board.computer_moves=[[0,1],[0,2],[1,2]]
+#    board.human_moves=[[0,0],[1,1],[1,2]]
+#    board.computer_moves=[[0,2],[0,1],[1,0]]
     board_imaginary = Board()             #theoretical board for AI to do calculations
     while True:
           board.show( )
@@ -223,11 +224,11 @@ def main():
           elif board.winner == "computer":
                  print "computer won"
                  break
-          else:
-               board.draw == True
-               print "it's a draw! game over"
+          elif board.draw == True:
+                 print "it's a draw! game over"
+                 break
     board.show( board.BOARD )
      
 if __name__ == '__main__':
-    main()
+   main()
    
