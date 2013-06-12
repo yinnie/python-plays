@@ -22,14 +22,12 @@ class Board(object):
     
     def __init__(self, board=None):
         if board is None:
-            self.BOARD = Board.generate_fresh_board()
             self.human_moves = []                             
             self.computer_moves = []
             self.human = True
             self.winner = None
             self.draw = False
         else:
-            self.BOARD = copy.deepcopy(board.BOARD)
             self.human_moves = copy.deepcopy(board.human_moves) 
             self.computer_moves = copy.deepcopy(board.computer_moves)
             self.human = board.human 
@@ -43,10 +41,18 @@ class Board(object):
     @property
     def computer(self):
         return not self.human
+    @property
+    def BOARD(self):
+        BOARD = [[' ']*3 for x in range(0,3)]
+        for (row, col) in self.human_moves: #(row col is a tuple)
+            BOARD[row][col] = 'x'
+        for row, col in self.computer_moves:
+            BOARD[row][col] = 'o'
+        return BOARD
+    def show(self):
+        for element in self.BOARD:
+            print "|".join(element)
 
-def show( list_of ):
-    for element in list_of:
-        print "|".join(element)
 
 def play( a_board ):  
         if a_board.human:
@@ -118,15 +124,15 @@ def check_valid_move( a_board, row, col ):
         return False
 
 def Minimax ( a_board ):
-    return MAX ( a_board, 0)
+    return Max ( a_board, 0)
 
-def MAX(a_board, depth):
+def Max(a_board, depth):
     board_temp = Board(a_board)
     if check_ending ( board_temp ):
        return leaf_value ( board_temp )
-    value =-2
+    value = -2
     for element in get_possible_boards (board_temp): 
-        value_temp = MIN ( element, depth + 1 )       
+        value_temp = Min ( element, depth + 1 )       
         if value_temp > value:
            value = value_temp
            the_right_move = element 
@@ -136,19 +142,18 @@ def MAX(a_board, depth):
        return the_right_move
     return value 
 
-def MIN ( a_board, depth ):
+def Min ( a_board, depth ):
     # min value of current state of board
     board_temp = Board(a_board)
     if check_ending ( board_temp ):
        return leaf_value ( board_temp )
-    value =2
+    value = 2
     the_right_move = board_temp 
     for element in get_possible_boards ( board_temp ):
-        value_temp = MAX (element, depth+1) 
+        value_temp = Max (element, depth + 1) 
         if value_temp < value:
            value = value_temp
            the_right_move = element 
-    print "min value is ", value
     log.info("min value is {value}".format(value=value))
     return value
 
@@ -158,8 +163,10 @@ def get_possible_boards ( a_board ):
         if a_board.human == True:
            #updating the newly created board with a mark in one of the empty cells
            new_board = update_board(a_board , "human", cell[0], cell[1])
-        else:
+           new_board.human = False
+        elif a_board.human == False:
            new_board = update_board(a_board, "computer", cell[0], cell[1])
+           new_board.human = True
         possible_boards.append(new_board)
 
     log.info("=========================================")
@@ -182,8 +189,10 @@ def leaf_value ( a_board ):
        return -1
     elif a_board.winner == "computer":
        return 1
-    else:
+    elif a_board.draw == True:
        return 0
+    else:
+       print "this is not a terminal board"
 
 def check_ending( a_board  ):   
     if check_winning (a_board.human_moves, a_board.winning_boards):
@@ -199,12 +208,13 @@ def check_ending( a_board  ):
        a_board.winner = None
        return False
 
-
 def main():
     board = Board()                      #board is the only globally exposed item.
+#    board.human_moves=[[0,0],[1,0],[1,1]]
+#    board.computer_moves=[[0,1],[0,2],[1,2]]
     board_imaginary = Board()             #theoretical board for AI to do calculations
     while True:
-          show( board.BOARD )
+          board.show( )
           if check_ending( board ) == False:
               board = play( board )
           elif board.winner == "human":
@@ -216,7 +226,7 @@ def main():
           else:
                board.draw == True
                print "it's a draw! game over"
-    show( board.BOARD )
+    board.show( board.BOARD )
      
 if __name__ == '__main__':
     main()
