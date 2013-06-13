@@ -60,9 +60,9 @@ def play( a_board ):
         return next_turn
 
 def human_move( a_board ):
-    print "place your move. enter row number of move"
+    print "place your move. enter row number of move (0 to 2)"
     row = int(raw_input())               
-    print "enter column number of move"
+    print "enter column number of move( 0 to 2)"
     col = int(raw_input())                            #remember to convert to int
     return [row, col]
 
