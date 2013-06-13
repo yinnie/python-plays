@@ -18,23 +18,53 @@ def euler002(limit):
         else:
            return value           
         
-def euler003(number):
-    prime_numbers = [2]
-    
-    def find_prime( a_number ):
-      own_primes = []
-      print own_primes
-      for x in prime_numbers:
-          if a_number%x == 0:
-             own_primes.append(x)
-             find_prime( a_number/x )
-      if own_primes.count == 0:
-         prime_numbers.append( a_number )
-    n = 3
-    while n < number:
-      find_prime(n)
-      n+=1
-    print prime_numbers
-    return prime_numbers[-1]  
+def euler003 ( number ):
+    prime_factors = []
+    n = 2
+    while number > 1:
+        if number % n ==0:
+           number = number/n
+           prime_factors.append(n)
+        else:
+           n += 1 
+    return max(prime_factors)
 
-print euler003(25)
+def euler004 (number_of_digits):
+    #get all the two digit numbers
+    all_two_digits = [str(x)+str(y) for x in range(10) for y in range(10)]
+    all_three_digits = [str(x)+str(y)+str(z) for x in range(10) for y in range(10) for z in range(10)]
+    palindroms_2 = []
+    palindroms_3 = []
+
+    def check_pandindroms_string (list_of_string, number_of_elements):
+        first_half, second_half = list_of_string[:number_of_elements/2], list_of_string[number_of_elements/2:]
+        first_half = ''.join(first_half)
+        second_half = ''.join(second_half)
+        return  first_half == second_half[::-1]
+
+    def check_palindroms_number (number):
+        digits = list(str(product))       #turn integer to list of strings 
+        if len(digits)%2==0:
+           number_of_eles = len(digits)
+           return check_pandindroms_string(digits, number_of_eles)
+        else: 
+           number_of_eles = len(digits)-1
+           return check_pandindroms_string(digits, number_of_eles)
+
+    if number_of_digits == 2:
+        for number0 in all_two_digits:
+             for number1 in all_two_digits:
+                 product = int(number0) * int(number1)
+                 if check_palindroms_number (product):
+                    palindroms_2.append(product)
+        return max(palindroms_2)
+    else:
+        for number0 in all_three_digits:
+             for number1 in all_three_digits:
+                 for number2 in all_three_digits:
+                     product = int(number0) * int(number1) * int(number2)
+                     if check_palindroms_number (product):
+                        palindroms_3.append(product)
+        return max(palindroms_3)
+
+print euler004(3)
