@@ -24,18 +24,15 @@ class Board(object):
         if board is None:
             self.human_moves = []                             
             self.computer_moves = []
-            self.human = True
+            self.turn = 0
             self.winner = None
             self.draw = False
         else:
             self.human_moves = copy.deepcopy(board.human_moves) 
             self.computer_moves = copy.deepcopy(board.computer_moves)
-            self.human = board.human 
+            self.turn  = board.turn 
             self.winner = board.winner 
             self.draw = board.draw 
-    @property
-    def computer(self):
-        return not self.human
     @property
     def BOARD(self):
         BOARD = [[' ']*3 for x in range(0,3)]
@@ -48,52 +45,47 @@ class Board(object):
         for element in self.BOARD:
             print "|".join(element)
 
-
 def play( a_board ):  
-        if a_board.human:
-            next_turn = move_result( a_board, human_move( a_board ),  "human")
-            next_turn.human = False
-        elif a_board.computer:
+        if a_board.turn == 0:
+            next_turn = move_result( a_board, human_move())
+            next_turn.turn = 1 
+        elif a_board.turn == 1:
             next_turn = computer_move ( a_board)
             # a_board.computer = True
-            next_turn.human = True
+            next_turn.turn = 0 
         return next_turn
 
-def human_move( a_board ):
+def human_move():
     print "place your move. enter row number of move (0 to 2)"
     row = int(raw_input())               
     print "enter column number of move( 0 to 2)"
     col = int(raw_input())                            #remember to convert to int
-    return [row, col]
+    return (row, col)
 
 def computer_move ( a_board ):
+   print "player ", a_board.turn, "'s turn"
    return Minimax (a_board)
 
-def dumb_computer_move( a_board ):                
-    row = random.randint(0,2)
-    col = random.randint(0,2)
-    return [row, col]
-
-def move_result( a_board, the_move, player ):
+def move_result( a_board, the_move ):
     if check_valid_move(a_board, the_move[0], the_move[1]) :
-       print player
-       new_board = update_board(a_board, player, the_move[0], the_move[1])
+       print "player ", a_board.turn, "'s turn"
+       new_board = update_board(a_board, the_move[0], the_move[1])
     else:
-       new_board =  move_result( a_board, human_move(a_board), player)
+       new_board =  move_result( a_board, human_move())
     return new_board
 
-def update_board( a_board, player, row, col ):   
+def update_board( a_board, row, col ):   
     a_board = Board(a_board)
-    if player == "human" :
+    if a_board.turn == 0:
        a_board.human_moves.append([row, col])
        a_board.BOARD[row][col] = 'x'
        if check_winning(a_board.human_moves, a_board.winning_boards):
-          a_board.winner = "human"
-    elif player == "computer":
+          a_board.winner = "player 0 "
+    elif a_board.turn == 1:
         a_board.computer_moves.append([row, col])
         a_board.BOARD[row][col] = 'o'
         if check_winning(a_board.computer_moves, a_board.winning_boards):
-          a_board.winner = "computer"
+          a_board.winner = "player 1"
     else:
         raise Exception("Bad paramater in update_board: player")
     return a_board   
@@ -131,7 +123,6 @@ def Max(a_board, depth):
            the_right_move = element 
     log.info("max value is {value}".format(value=value))
     if depth == 0:
-       print "max value ", value
        return the_right_move
     return value 
 
@@ -152,13 +143,13 @@ def Min ( a_board, depth ):
 def get_possible_boards ( a_board ):
     possible_boards = []
     for cell in get_empty_cells( a_board ):
-        if a_board.human == True:
+        if a_board.turn  == 0:
            #updating the newly created board with a mark in one of the empty cells
-           new_board = update_board(a_board , "human", cell[0], cell[1])
-           new_board.human = False
-        elif a_board.human == False:
-           new_board = update_board(a_board, "computer", cell[0], cell[1])
-           new_board.human = True
+           new_board = update_board(a_board , cell[0], cell[1])
+           new_board.turn = 1 
+        elif a_board.turn== 1:
+           new_board = update_board(a_board, cell[0], cell[1])
+           new_board.turn = 0 
         possible_boards.append(new_board)
 
     log.info("=========================================")
