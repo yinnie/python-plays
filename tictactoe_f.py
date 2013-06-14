@@ -64,8 +64,7 @@ def human_move():
 
 def computer_move ( a_board ):
     print "player ", a_board.turn, "'s turn"
-    return Minimax (a_board)      #the old separate max and min way
-#    minimax ( a_board, 0 )
+    return minimax ( a_board, 0 )
 
 def move_result( a_board, the_move ):
     if check_valid_move(a_board, the_move[0], the_move[1]) :
@@ -109,9 +108,6 @@ def check_valid_move( a_board, row, col ):
         print "that cell is taken. "    
         return False
 
-def Minimax ( a_board ):
-    return Max ( a_board, 0)
-
 def minimax ( a_board, depth ):
     board_temp = Board(a_board)
     if check_ending ( board_temp ):
@@ -120,7 +116,10 @@ def minimax ( a_board, depth ):
        value = -2
     elif board_temp.turn == 0:
        value = 2
-    for element in get_possible_boards (board_temp): 
+    
+    the_right_move = Board()
+
+    for element in get_possible_boards ( board_temp ): 
         value_temp = minimax ( element, depth + 1 )       
         if board_temp.turn == 1 and value_temp > value:
                value = value_temp
@@ -129,41 +128,13 @@ def minimax ( a_board, depth ):
                value = value_temp
                the_right_move = element 
     if board_temp.turn == 1:
-        log.info("max value is {value}".format(value=value))
+        log.info("max value is {value}".format( value=value ))
     elif board_temp.turn == 0:
-        log.info("min value is {value}".format(value=value))
+        log.info("min value is {value}".format( value=value ))
+
     if depth == 0:
        return the_right_move
     return value 
-
-def Max(a_board, depth):
-    board_temp = Board(a_board)
-    if check_ending ( board_temp ):
-       return leaf_value ( board_temp )
-    value = -2
-    for element in get_possible_boards (board_temp): 
-        value_temp = Min ( element, depth + 1 )       
-        if value_temp > value:
-           value = value_temp
-           the_right_move = element 
-    log.info("max value is {value}".format(value=value))
-    if depth == 0:
-       return the_right_move
-    return value 
-
-def Min ( a_board, depth ):
-    board_temp = Board(a_board)
-    if check_ending ( board_temp ):
-       return leaf_value ( board_temp )
-    value = 2
-    the_right_move = board_temp 
-    for element in get_possible_boards ( board_temp ):
-        value_temp = Max (element, depth + 1) 
-        if value_temp < value:
-           value = value_temp
-           the_right_move = element 
-    log.info("min value is {value}".format(value=value))
-    return value
 
 def get_possible_boards ( a_board ):
     possible_boards = []
@@ -219,8 +190,8 @@ def check_ending( a_board  ):
 
 def main():
     board = Board()
-#    board.human_moves=[[0,0],[1,1],[1,2]]  #debugging by making fuller boards
-#    board.computer_moves=[[0,2],[0,1],[1,0]]
+  #  board.human_moves=[[0,0],[1,1],[1,2]]  #debugging by making fuller boards
+  #  board.computer_moves=[[0,2],[0,1],[1,0]]
     while True:
           board.show( )
           if check_ending( board ) == False:
