@@ -63,8 +63,9 @@ def human_move():
     return (row, col)
 
 def computer_move ( a_board ):
-   print "player ", a_board.turn, "'s turn"
-   return Minimax (a_board)
+    print "player ", a_board.turn, "'s turn"
+    return Minimax (a_board)      #the old separate max and min way
+#    minimax ( a_board, 0 )
 
 def move_result( a_board, the_move ):
     if check_valid_move(a_board, the_move[0], the_move[1]) :
@@ -110,6 +111,30 @@ def check_valid_move( a_board, row, col ):
 
 def Minimax ( a_board ):
     return Max ( a_board, 0)
+
+def minimax ( a_board, depth ):
+    board_temp = Board(a_board)
+    if check_ending ( board_temp ):
+       return leaf_value ( board_temp )
+    if board_temp.turn == 1:
+       value = -2
+    elif board_temp.turn == 0:
+       value = 2
+    for element in get_possible_boards (board_temp): 
+        value_temp = minimax ( element, depth + 1 )       
+        if board_temp.turn == 1 and value_temp > value:
+               value = value_temp
+               the_right_move = element 
+        elif board_temp.turn == 0 and value_temp < value:
+               value = value_temp
+               the_right_move = element 
+    if board_temp.turn == 1:
+        log.info("max value is {value}".format(value=value))
+    elif board_temp.turn == 0:
+        log.info("min value is {value}".format(value=value))
+    if depth == 0:
+       return the_right_move
+    return value 
 
 def Max(a_board, depth):
     board_temp = Board(a_board)

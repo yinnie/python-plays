@@ -67,4 +67,4 @@ def euler004 (number_of_digits):
                         palindroms_3.append(product)
         return max(palindroms_3)
 
-print euler004(3)
+print euler004(2)
