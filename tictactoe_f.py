@@ -22,33 +22,33 @@ class Board (object):
     
     def __init__(self, board=None):
         if board is None:
-            self.human_moves = []                             
-            self.computer_moves = []
+            self.player0_moves = []                             
+            self.player1_moves = []
             self.turn = 0     #using this to switch turns 
             self.winner = None
             self.draw = False
         else:
-            self.human_moves = copy.deepcopy(board.human_moves) 
-            self.computer_moves = copy.deepcopy(board.computer_moves)
+            self.player0_moves = copy.deepcopy(board.player0_moves) 
+            self.player1_moves = copy.deepcopy(board.player1_moves)
             self.turn  = board.turn 
             self.winner = board.winner 
             self.draw = board.draw 
     @property
     def BOARD (self):
         BOARD = [[' ']*3 for x in range(0,3)]
-        for (row, col) in self.human_moves: #(row col is a tuple)
+        for (row, col) in self.player0_moves: #(row col is a tuple)
             BOARD[row][col] = 'x'
-        for row, col in self.computer_moves:
+        for row, col in self.player1_moves:
             BOARD[row][col] = 'o'
         return BOARD
     def show(self):
         for element in self.BOARD:
             print "|".join(element)
     def check_ending ( self ):   
-        if check_winning ( self.human_moves, self.winning_boards ):
+        if check_winning ( self.player0_moves, self.winning_boards ):
            self.winner = "human"
            return True
-        elif check_winning ( self.computer_moves, self.winning_boards ):
+        elif check_winning ( self.player1_moves, self.winning_boards ):
            self.winner = "computer"
            return True
         else:
@@ -59,7 +59,7 @@ class Board (object):
             self.draw = True
             return True
     @property
-    def leaf_value ( self  ):                                 
+    def leaf_value ( self ):                                 
          if self.winner == "human":   
             return -1
          elif self.winner == "computer":
@@ -109,14 +109,14 @@ def human_move_result ( a_board, the_move ):
 def update_board ( a_board, row, col ):   
     a_board = Board(a_board)
     if a_board.turn == 0:
-       a_board.human_moves.append([row, col])
+       a_board.player0_moves.append([row, col])
        a_board.BOARD[row][col] = 'x'
-       if check_winning(a_board.human_moves, a_board.winning_boards):
+       if check_winning(a_board.player0_moves, a_board.winning_boards):
           a_board.winner = "player 0 "
     elif a_board.turn == 1:
-        a_board.computer_moves.append([row, col])
+        a_board.player1_moves.append([row, col])
         a_board.BOARD[row][col] = 'o'
-        if check_winning(a_board.computer_moves, a_board.winning_boards):
+        if check_winning(a_board.player1_moves, a_board.winning_boards):
           a_board.winner = "player 1"
     else:
         raise Exception("Bad paramater in update_board: player")
@@ -143,7 +143,7 @@ def check_valid_move ( a_board, row, col ):
 def minimax ( a_board, depth ):
     board_temp = Board(a_board)
     if board_temp.check_ending():
-       return board_temp.leaf_value ()
+       value =  board_temp.leaf_value()
     if board_temp.turn == 1:
        value = -2
     elif board_temp.turn == 0:
@@ -213,8 +213,8 @@ def main():
     print " enter 2 for computer v.s. computer"
     players = set_players (int(raw_input()))
     print players[0]," v.s ",  players[1]
-  #  board.human_moves=[[0,0],[1,1],[1,2]]  #debugging by making fuller boards
-  #  board.computer_moves=[[0,2],[0,1],[1,0]]
+  #  board.player0_moves=[[0,0],[1,1],[1,2]]  #debugging by making fuller boards
+  #  board.player1_moves=[[0,2],[0,1],[1,0]]
     while True:
           board.show()
           if board.check_ending() == False:
