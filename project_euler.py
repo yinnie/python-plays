@@ -1,3 +1,5 @@
+import itertools
+
 def euler001(n):
     value = 0
     for x in range(n):
@@ -28,6 +30,12 @@ def euler003 ( number ):
         else:
            n += 1 
     return max(prime_factors)
+
+def euler004b (num):
+    pairs = [ (a,b) for a,b in itertools.combinations(range(100,1000), 2) ]
+    multiplied_pairs = map(lambda (a,b):a*b, pairs)
+    palindromes = filter (lambda i:str(i)==str(i)[::-1], multiplied_pairs)
+    return max(palindromes)
 
 def euler004 (number_of_digits):
     #get all the two digit numbers
@@ -61,10 +69,9 @@ def euler004 (number_of_digits):
     else:
         for number0 in all_three_digits:
              for number1 in all_three_digits:
-                 for number2 in all_three_digits:
-                     product = int(number0) * int(number1) * int(number2)
+                     product = int(number0) * int(number1)
                      if check_palindroms_number (product):
                         palindroms_3.append(product)
         return max(palindroms_3)
 
-print euler004(2)
+print euler004(3)
