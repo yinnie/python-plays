@@ -47,9 +47,11 @@ class Player(object):
                     s1= str(quantity)
                     s2= show_ascii(key, quantity)
                     all_inventory += ( s0+'<br />'+s1+'<br />'+s2+'<br />') 
-            return Markup( all_inventory )
+            m = Markup( all_inventory)
+            print type(m)
+            return m  
         else:
-            return "your inventory is empty"
+            return Markup("your inventory is empty")
      
     def set_inventory(self, item, quantity):
         if item in self._inventory:
@@ -84,7 +86,7 @@ class Player(object):
             s2= "''''''''''''''''''''''''''''''''''''''''''''''''''"
             s3= "here's your current inventory"
             s4= self.get_inventory() 
-            return Markup( s0+'<br>'+s1+'<br>'+s2+'<br>'+s3+'<br>'+s4 ) 
+            return Markup( s0+'<br>'+s1+'<br>'+s2+'<br>'+s3+'<br>')+ s4  
         return buy_stuff 
 
     def plant(self, item_name):
@@ -120,16 +122,16 @@ class Player(object):
         else:
               s2=""
         s3= '<br />'.join(self.commands)
-        return Markup(s0+'<br />'+s1+'<br />'+s2+'<br />'+s3) 
+        return Markup(s0+'<br />'+ s1 + '<br />'+ s2 + '<br />'+ s3)
 
     def play(self, command):
         if command in self.commands:
             return self.do_command(command)  
         else:
-            return 'that action is not available. try again'
+            return Markup('that action is not available. try again')
 
 def show_ascii(name, quantity=1):
-    return Markup( (ascii.get(name) + '<br />')* quantity )
+    return (ascii.get(name) + '<br />')* quantity
 
 """info look-up ascii art + price + growth rates as factor of 1 second"""
 lookup = { 'fish':['<>{',20, 0.3],
@@ -187,7 +189,7 @@ class Farm(object):
         all_crops = ''
         for crop, quantity in self.crops.items():
              all_crops = (ascii.get(crop)+' ') * int(quantity)
-        return Markup( all_crops + "<br>YYYYYYYYY|||||||||......YYY../\/\/\...|||||.....|||" )
+        return  all_crops + "<br>" + "YYYYYYYYY|||||||||......YYY../\/\/\...|||||.....|||" )
      
 quest_lookup = {'peaceful forest':[3,10, 'YYY__YYYYYYY_YY_YYYYYYYY__YYY_Y'],
                 'mount goblin':[3, 10, '../^^^^^^^\../^^\...../^\..'],
@@ -269,7 +271,7 @@ def game():
     result = player.play(resp)
     avai_actions = player.show_menu()
     return render_template('game.html', result=result, avai_actions=avai_actions)
-    
+
 if __name__== '__main__':
     app.debug = True
     app.run()
